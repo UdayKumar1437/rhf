@@ -1,0 +1,88 @@
+import React from "react";
+import { useForm } from "react-hook-form";
+
+const YouTubeForm = () => {
+  const form = useForm();
+
+  const { register, handleSubmit, formState } = form;
+
+  const { errors } = formState;
+
+  console.log(errors);
+
+  //   const {name,ref,onChange,onBlur} = register("username")
+
+  const onSubmit = (data) => {
+    console.log("Form Submitted", data);
+  };
+  return (
+    <div className="flex justify-center items-center h-[100vh]">
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className="flex flex-col w-1/3 gap-2"
+      >
+        <label className="text-white" htmlFor="username">
+          Username
+        </label>
+        <input
+          className="border border-white py-2"
+          type="text"
+          id="username"
+          {...register("username", {
+            required: {
+              value: true,
+              message: "Username is required",
+            },
+          })}
+        />
+        {errors.username && (
+          <p className="text-red-500">{errors.username.message}</p>
+        )}
+
+        <label className="text-white" htmlFor="email">
+          Email
+        </label>
+        <input
+          className="border py-2 border-white"
+          type="email"
+          id="email"
+          {...register("email", {
+            pattern: {
+              value: /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/,
+              message: "Invalid Email format",
+            },
+            validate: {
+              notanAdmin:(fieldValue)=>{
+                return (fieldValue !== "uday@gmail.com" || "Enter a different email address")
+              },
+              BlackListed:(fieldValue)=>
+              {
+                return !fieldValue.endsWith("@gmail.com") || "This domain is not supported"
+              }
+            },
+          })}
+        />
+        {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+
+        <label className="text-white" htmlFor="channel">
+          Channel
+        </label>
+        <input
+          className="border py-2 border-white"
+          type="text"
+          id="channel"
+          {...register("channel")}
+        />
+        {errors.channel && (
+          <p className="text-red-500">{errors.channel.message}</p>
+        )}
+
+        <button className="border  bg-black text-white border-black px-2 py-2 rounded-md">
+          Submit
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default YouTubeForm;
