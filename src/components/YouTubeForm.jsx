@@ -2,13 +2,37 @@ import React from "react";
 import { useForm } from "react-hook-form";
 
 const YouTubeForm = () => {
-  const form = useForm();
+  
+  const form = useForm({
+    defaultValues: async () => {
+      const response = await fetch(
+        "https://jsonplaceholder.typicode.com/users/1",
+      );
+      const data = await response.json();
+      return {
+        username: "",
+        email: "",
+        channel: "",
+        social: {
+          twitter: "",
+          facebook: "",
+        },
+        phoneNumbers: [],
+      };
+    },
+  });
 
-  const { register, handleSubmit, formState } = form;
+  const handleGetValues = ()=>
+  {
+    console.log(getValues().username)
+  }
+  const { register, handleSubmit, formState,watch,getValues,reset } = form;
 
-  const { errors } = formState;
+  const { errors,touchedFields } = formState;
 
   console.log(errors);
+
+  const watchuserName = watch()
 
   //   const {name,ref,onChange,onBlur} = register("username")
 
@@ -21,6 +45,8 @@ const YouTubeForm = () => {
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col w-1/3 gap-2"
       >
+
+        <h1>{JSON.stringify(watchuserName)}</h1>
         <label className="text-white" htmlFor="username">
           Username
         </label>
@@ -33,6 +59,7 @@ const YouTubeForm = () => {
               value: true,
               message: "Username is required",
             },
+            disabled :true,
           })}
         />
         {errors.username && (
@@ -52,13 +79,18 @@ const YouTubeForm = () => {
               message: "Invalid Email format",
             },
             validate: {
-              notanAdmin:(fieldValue)=>{
-                return (fieldValue !== "uday@gmail.com" || "Enter a different email address")
+              notanAdmin: (fieldValue) => {
+                return (
+                  fieldValue !== "uday@gmail.com" ||
+                  "Enter a different email address"
+                );
               },
-              BlackListed:(fieldValue)=>
-              {
-                return !fieldValue.endsWith("@gmail.com") || "This domain is not supported"
-              }
+              BlackListed: (fieldValue) => {
+                return (
+                  !fieldValue.endsWith("@gmail.com") ||
+                  "This domain is not supported"
+                );
+              },
             },
           })}
         />
@@ -73,13 +105,47 @@ const YouTubeForm = () => {
           id="channel"
           {...register("channel")}
         />
+        <label className="text-white" htmlFor="channel">
+          Social Twitter
+        </label>
+        <input
+          className="border py-2 border-white"
+          type="text"
+          id="channel"
+          {...register("social.twitter"),{
+              required : "Twitter profile is required",
+              disabled:true,
+          }}
+        />
         {errors.channel && (
           <p className="text-red-500">{errors.channel.message}</p>
         )}
 
+        <label className="text-white" htmlFor="primary-phone">
+          Phone Number
+        </label>
+        <input
+          className="border py-2 border-white"
+          type="text"
+          id="channel"
+          {...register("phoneNumbers.0")}
+        />
+        <label className="text-white" htmlFor="primary-phone">
+          Sec Phone Number
+        </label>
+        <input
+          className="border py-2 border-white"
+          type="text"
+          id="channel"
+          {...register("phoneNumbers.1")}
+        />
         <button className="border  bg-black text-white border-black px-2 py-2 rounded-md">
           Submit
         </button>
+<button onClick={()=>reset()} className="border  bg-black text-white border-black px-2 py-2 rounded-md">
+          Reset
+        </button>
+        <button onClick={handleGetValues}>Get Values</button>
       </form>
     </div>
   );
