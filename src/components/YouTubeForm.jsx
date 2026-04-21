@@ -1,5 +1,14 @@
 import React from "react";
 import { useForm } from "react-hook-form";
+import {yupResolver} from "@hookform/resolvers/yup"
+import * as yup from "yup"
+
+
+const schema = yup.object({
+  username: yup.string().min(5,"Should be 5 charcters").max(7,"Max seven characters").required("Username is required"),
+  email:yup.string().email("Email format is not valid").required("Email is required"),
+  channel:yup.string().required("Channel is required")
+})
 
 const YouTubeForm = () => {
   
@@ -20,6 +29,7 @@ const YouTubeForm = () => {
         phoneNumbers: [],
       };
     },
+    resolver:yupResolver(schema)
   });
 
   const handleGetValues = ()=>
@@ -55,11 +65,7 @@ const YouTubeForm = () => {
           type="text"
           id="username"
           {...register("username", {
-            required: {
-              value: true,
-              message: "Username is required",
-            },
-            disabled :true,
+            disabled :false,
           })}
         />
         {errors.username && (
